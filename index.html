@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1a3a2a">
-<title>Carbon-Free Journey Calculator V7.1 Fixed</title>
+<title>Carbon-Free Journey Calculator</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -274,6 +274,44 @@
   .source-pill strong{display:block;color:var(--mint);font-family:'Space Grotesk',sans-serif;margin-bottom:4px}
   .source-pill span{font-size:13px;color:rgba(255,255,255,.72)}
 
+
+  /* ── TRIP SETUP CARD ── */
+  .setup-card{
+    background:linear-gradient(135deg,rgba(78,203,128,.1) 0%,rgba(45,122,79,.06) 100%);
+    border:1.5px solid rgba(78,203,128,.35);
+    border-radius:18px;padding:20px 18px;margin-bottom:20px;
+  }
+  .setup-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .setup-icon{font-size:22px}
+  .setup-title{font-size:clamp(15px,4vw,17px);font-weight:700;color:var(--white)}
+  .setup-sub{font-size:13px;color:rgba(255,255,255,.5);margin-top:2px}
+  .traveler-types{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ttype-btn{
+    display:flex;align-items:center;gap:6px;
+    padding:8px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.05);color:rgba(255,255,255,.65);
+    font-family:'Sarabun',sans-serif;font-size:14px;cursor:pointer;
+    transition:all .2s;-webkit-tap-highlight-color:transparent;min-height:40px;
+  }
+  .ttype-btn.active{
+    background:rgba(78,203,128,.18);border-color:rgba(78,203,128,.6);
+    color:var(--white);font-weight:600;
+  }
+  .ttype-btn:hover:not(.active){border-color:rgba(78,203,128,.4);color:var(--white)}
+
+
+  /* ── ACTIVITY GROUPS ── */
+  .act-group-label{
+    font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2.5px;
+    text-transform:uppercase;color:rgba(78,203,128,.6);
+    margin:14px 0 8px;padding:0 2px;
+  }
+  .act-group-label:first-child{margin-top:0}
+  .activity-item .act-ef{
+    font-size:11px;color:rgba(255,255,255,.35);margin-left:4px;
+    font-family:'Space Grotesk',sans-serif;
+  }
+  .act-zero .act-ef{color:rgba(78,203,128,.5)}
 </style>
 </head>
 <body>
@@ -287,18 +325,53 @@
 
 <!-- HERO -->
 <div class="hero">
-  <div class="badge" id="hero_badge">Carbon-Free Journey · TGO 2569</div>
+  <div class="badge" id="hero_badge">Carbon-Free Journey · TGO</div>
   <h1 id="hero_h1">เที่ยวไทย <span id="hero_h1b">ไม่ทิ้งคาร์บอน</span></h1>
   <p id="hero_sub">คำนวณรอยเท้าคาร์บอนจากทริปท่องเที่ยวของคุณ</p>
   <div class="trip-meta">
-    <div class="trip-chip"><span>📍</span> <span id="chip1">ศรีราชา → จันทบุรี</span></div>
-    <div class="trip-chip"><span>🌿</span> <span id="chip2">เขาชะเมา · น้ำตกพริ้ว</span></div>
-    <div class="trip-chip"><span>👨‍👩‍👦</span> <span id="chip3">ครอบครัว 4 คน</span></div>
+    <div class="trip-chip"><span>📍</span> <span id="chip1">—</span></div>
+    <div class="trip-chip"><span>🌿</span> <span id="chip2">—</span></div>
+    <div class="trip-chip"><span id="chip3_icon">👨‍👩‍👦</span> <span id="chip3">—</span></div>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="container">
+
+  <!-- TRIP SETUP -->
+  <div class="setup-card">
+    <div class="setup-header">
+      <div class="setup-icon">🗺️</div>
+      <div>
+        <div class="setup-title" id="setup_title">ข้อมูลทริปของคุณ</div>
+        <div class="setup-sub" id="setup_sub">ปรับให้ตรงกับการเดินทางจริง</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label id="lbl_origin">จุดออกเดินทาง</label>
+        <input type="text" id="trip_origin" value="" placeholder="เช่น กรุงเทพฯ, เชียงใหม่" oninput="updateTripMeta()">
+      </div>
+      <div class="field">
+        <label id="lbl_dest">ปลายทาง / จังหวัด</label>
+        <input type="text" id="trip_dest" value="" placeholder="เช่น เชียงราย, ภูเก็ต" oninput="updateTripMeta()">
+      </div>
+    </div>
+    <div class="field">
+      <label id="lbl_attraction">สถานที่ท่องเที่ยว</label>
+      <input type="text" id="trip_attraction" value="" placeholder="เช่น ดอยอินทนนท์ · วัดพระธาตุ" oninput="updateTripMeta()">
+    </div>
+    <div style="margin-top:14px">
+      <label id="lbl_traveler_type" style="font-size:clamp(12px,3vw,13px);color:rgba(255,255,255,.6);display:block;margin-bottom:8px">ประเภทผู้เดินทาง</label>
+      <div class="traveler-types" id="traveler_types">
+        <button class="ttype-btn active" data-type="family" data-th="ครอบครัว" data-en="Family" onclick="setTravelerType(this)">👨‍👩‍👦 <span id="ttype_family">ครอบครัว</span></button>
+        <button class="ttype-btn" data-type="friends" data-th="กลุ่มเพื่อน" data-en="Friends" onclick="setTravelerType(this)">👫 <span id="ttype_friends">กลุ่มเพื่อน</span></button>
+        <button class="ttype-btn" data-type="couple" data-th="คู่รัก" data-en="Couple" onclick="setTravelerType(this)">💑 <span id="ttype_couple">คู่รัก</span></button>
+        <button class="ttype-btn" data-type="solo" data-th="เดี่ยว" data-en="Solo" onclick="setTravelerType(this)">🧍 <span id="ttype_solo">เดี่ยว</span></button>
+        <button class="ttype-btn" data-type="team" data-th="ทีมงาน" data-en="Work Team" onclick="setTravelerType(this)">👔 <span id="ttype_team">ทีมงาน</span></button>
+      </div>
+    </div>
+  </div>
 
   <!-- TRANSPORT -->
   <div class="card">
@@ -312,20 +385,23 @@
     <div class="field-row">
       <div class="field">
         <label id="lbl_dist">ระยะทางรวม (กม.)</label>
-        <input type="number" id="distance" value="520" min="0">
+        <input type="number" id="distance" value="" min="0" placeholder="เช่น 520">
       </div>
       <div class="field">
         <label id="lbl_fuel">ประเภทน้ำมัน</label>
         <select id="fuel_type">
-          <option value="B7"        id="fo_B7">ดีเซล B7 (มาตรฐาน)</option>
           <option value="B20"       id="fo_B20" selected>ดีเซล B20 (ชีวภาพ)</option>
           <option value="premier"   id="fo_premier">ดีเซล Premier (พรีเมียม)</option>
           <option value="gasoline"  id="fo_gasoline">เบนซิน</option>
-          <option value="gasohol95" id="fo_gasohol95">แก๊สโซฮอล์ E10 (95)</option>
+          <option value="gasohol95" id="fo_gasohol95">แก๊สโซฮอล์ (95)</option>
+          <option value="lpg"       id="fo_lpg">LPG (ก๊าซธรรมชาติ)</option>
           <option value="EV"        id="fo_EV">รถไฟฟ้า EV</option>
           <option value="motorcycle"id="fo_motorcycle">มอเตอร์ไซค์</option>
           <option value="bus"       id="fo_bus">รถโดยสาร VIP Bus</option>
-          <option value="train"     id="fo_train">รถไฟ (ถึงระยอง) + บขส./รถตู้</option>
+          <option value="train"     id="fo_train">🚂 รถไฟ</option>
+          <option value="airplane"  id="fo_airplane">✈️ เครื่องบิน Low-Cost</option>
+          <option value="taxi"      id="fo_taxi">🚕 Taxi / Grab Car</option>
+          <option value="bts"       id="fo_bts">🚈 BTS / MRT / รถไฟฟ้าในเมือง</option>
         </select>
       </div>
     </div>
@@ -333,7 +409,7 @@
       <div class="field">
         <label id="lbl_cons">อัตราสิ้นเปลือง</label>
         <div style="display:flex;gap:8px;align-items:center">
-          <input type="number" id="consumption" value="13" step="0.1" min="0"
+          <input type="number" id="consumption" value="" step="0.1" min="0" placeholder="เช่น 13"
                  style="flex:1" oninput="syncConsUnit()">
           <div style="display:flex;border:1.5px solid rgba(78,203,128,0.35);border-radius:10px;overflow:hidden;flex-shrink:0">
             <button id="btn_kml" onclick="setConsUnit('kml')"
@@ -349,12 +425,12 @@
           </div>
         </div>
         <div id="cons_converted" style="font-size:12px;color:rgba(78,203,128,0.8);margin-top:4px">
-          = 7.7 ลิตร/100กม.
+          
         </div>
       </div>
       <div class="field">
         <label id="lbl_pax">จำนวนผู้โดยสาร</label>
-        <input type="number" id="passengers" value="4" min="1" max="10">
+        <input type="number" id="passengers" value="1" min="1" max="50">
       </div>
     </div>
     <div class="highlight" id="fuel_hint">
@@ -374,12 +450,12 @@
     <div class="field-row">
       <div class="field">
         <label id="lbl_local">มื้ออาหารท้องถิ่น / Local</label>
-        <input type="number" id="local_meals" value="4" min="0">
+        <input type="number" id="local_meals" value="0" min="0">
         <div class="emission-tag">~0.5 kgCO₂/<span id="meal_unit">มื้อ</span> (low)</div>
       </div>
       <div class="field">
         <label id="lbl_regular">มื้ออาหารทั่วไป</label>
-        <input type="number" id="regular_meals" value="2" min="0">
+        <input type="number" id="regular_meals" value="0" min="0">
         <div class="emission-tag">~1.2 kgCO₂/<span id="meal_unit2">มื้อ</span></div>
       </div>
     </div>
@@ -397,7 +473,7 @@
     <div class="field-row">
       <div class="field">
         <label id="lbl_nights">จำนวนคืน</label>
-        <input type="number" id="nights" value="1" min="0">
+        <input type="number" id="nights" value="0" min="0">
       </div>
       <div class="field">
         <label id="lbl_hotel">ประเภทที่พัก</label>
@@ -421,22 +497,79 @@
       </div>
     </div>
     <div class="activity-list">
-      <label class="activity-item">
-        <input type="checkbox" id="act_hiking" checked>
-        <span id="act_hiking_lbl">🥾 เดินป่า / ขึ้นน้ำตก (Zero emission)</span>
+
+      <!-- GROUP 1: Zero / Nature -->
+      <div class="act-group-label" id="actg_nature">🌿 ธรรมชาติ & กีฬา (Zero emission)</div>
+      <label class="activity-item act-zero">
+        <input type="checkbox" id="act_hiking">
+        <span id="act_hiking_lbl">🥾 เดินป่า / ขึ้นน้ำตก <span class="act-ef">0 kg</span></span>
       </label>
-      <label class="activity-item">
-        <input type="checkbox" id="act_temple" checked>
-        <span id="act_temple_lbl">🙏 ไหว้วัด / สักการะ (Zero emission)</span>
+      <label class="activity-item act-zero">
+        <input type="checkbox" id="act_cycling">
+        <span id="act_cycling_lbl">🚴 ปั่นจักรยาน / จักรยานเสือภูเขา <span class="act-ef">0 kg</span></span>
+      </label>
+      <label class="activity-item act-zero">
+        <input type="checkbox" id="act_trail">
+        <span id="act_trail_lbl">🏃 เดินเทรล / วิ่งเทรล <span class="act-ef">0 kg</span></span>
+      </label>
+      <label class="activity-item act-zero">
+        <input type="checkbox" id="act_swim">
+        <span id="act_swim_lbl">🏊 ว่ายน้ำ / ดำน้ำตื้น (Snorkel) <span class="act-ef">0 kg</span></span>
+      </label>
+
+      <!-- GROUP 2: Culture -->
+      <div class="act-group-label" id="actg_culture">🏛️ วัฒนธรรม & ท้องถิ่น (Zero emission)</div>
+      <label class="activity-item act-zero">
+        <input type="checkbox" id="act_temple">
+        <span id="act_temple_lbl">🙏 ไหว้วัด / สักการะ / ชมวิว <span class="act-ef">0 kg</span></span>
+      </label>
+      <label class="activity-item act-zero">
+        <input type="checkbox" id="act_market">
+        <span id="act_market_lbl">🎪 เดินตลาด / ถนนคนเดิน <span class="act-ef">0 kg</span></span>
       </label>
       <label class="activity-item">
         <input type="checkbox" id="act_souvenir">
-        <span id="act_souvenir_lbl">🛍️ ซื้อของฝาก / ของที่ระลึก (~0.5 kg/ครั้ง)</span>
+        <span id="act_souvenir_lbl">🛍️ ซื้อของฝาก / ของที่ระลึก <span class="act-ef">~0.5 kg/คน</span></span>
+      </label>
+
+      <!-- GROUP 3: Water & Adventure -->
+      <div class="act-group-label" id="actg_water">⚓ ทางน้ำ & ผจญภัย</div>
+      <label class="activity-item act-zero">
+        <input type="checkbox" id="act_dive">
+        <span id="act_dive_lbl">🤿 ดำน้ำลึก / ดูปะการัง (Shore dive) <span class="act-ef">0 kg</span></span>
       </label>
       <label class="activity-item">
-        <input type="checkbox" id="act_ac" checked>
-        <span id="act_ac_lbl">❄️ ใช้แอร์ที่พัก (คิดรวมในที่พักแล้ว)</span>
+        <input type="checkbox" id="act_boat">
+        <span id="act_boat_lbl">⛵ นั่งเรือข้ามเกาะ / ชมวิว <span class="act-ef">~1.5 kg/คน</span></span>
       </label>
+      <label class="activity-item">
+        <input type="checkbox" id="act_speedboat">
+        <span id="act_speedboat_lbl">🚤 เรือสปีดโบ๊ท / เรือหางยาว <span class="act-ef">~3.5 kg/คน</span></span>
+      </label>
+      <label class="activity-item">
+        <input type="checkbox" id="act_kayak">
+        <span id="act_kayak_lbl">🛶 พายเรือคายัค / แคนู <span class="act-ef">0 kg</span></span>
+      </label>
+
+      <!-- GROUP 4: Leisure & Sport -->
+      <div class="act-group-label" id="actg_leisure">🏌️ กีฬา & สันทนาการ</div>
+      <label class="activity-item">
+        <input type="checkbox" id="act_golf">
+        <span id="act_golf_lbl">⛳ ออกรอบตีกอล์ฟ (18 หลุม) <span class="act-ef">~2.0 kg/คน</span></span>
+      </label>
+      <label class="activity-item">
+        <input type="checkbox" id="act_atv">
+        <span id="act_atv_lbl">🏍️ ขี่ ATV / รถออฟโรด <span class="act-ef">~2.5 kg/คน</span></span>
+      </label>
+      <label class="activity-item">
+        <input type="checkbox" id="act_zipline">
+        <span id="act_zipline_lbl">🪂 ซิปไลน์ / กิจกรรม Outdoor Park <span class="act-ef">~0.3 kg/คน</span></span>
+      </label>
+      <label class="activity-item">
+        <input type="checkbox" id="act_ac">
+        <span id="act_ac_lbl">❄️ ใช้แอร์ที่พัก <span class="act-ef">(รวมในค่าที่พักแล้ว)</span></span>
+      </label>
+
     </div>
   </div>
 
@@ -447,7 +580,7 @@
     <div id="save_capture" style="border-radius:16px;overflow:hidden;background:var(--forest)">
     <div style="padding:20px 20px 0">
     <div class="section-label" id="res_label">ผลลัพธ์</div>
-    <div class="section-title" id="res_title">Carbon Footprint ทริป ศรีราชา → จันทบุรี</div>
+    <div class="section-title" id="res_title">Carbon Footprint</div>
     </div>
 
     <div class="result-hero" id="result_card" style="margin:12px 20px 0;border-radius:16px">
@@ -480,7 +613,7 @@
     <div class="rec-card">
       <div class="rec-head">
         <div class="rec-title" id="rec_title">✨ Smart Recommendation</div>
-        <div class="rec-badge">V7.1</div>
+        
       </div>
       <div class="rec-list" id="rec_list"></div>
       <div class="scenario-grid">
@@ -561,15 +694,20 @@
     <div class="share-card">
       <div class="share-title" id="share_title">📣 แชร์แรงบันดาลใจ</div>
       <div class="share-sub" id="share_sub">ร่วมส่งต่อการเที่ยวแบบ Low Carbon ให้คนไทย</div>
-      <div class="hashtags">
+      <div class="hashtags" id="hashtag_container">
+        <!-- Static campaign tags -->
         <span class="hashtag">#เที่ยวไทยไม่ทิ้งคาร์บอน</span>
         <span class="hashtag">#CarbonFreeJourney</span>
         <span class="hashtag">#LowCarbon</span>
         <span class="hashtag">#TGO</span>
-        <span class="hashtag">#B20ดีกว่า</span>
-        <span class="hashtag">#จันทบุรี</span>
-        <span class="hashtag">#เขาชะเมา</span>
-        <span class="hashtag">#น้ำตกพริ้ว</span>
+        <span class="hashtag">#พลังงานทางเลือก</span>
+        <span class="hashtag">#EV</span>
+        <span class="hashtag">#GreenTravel</span>
+        <span class="hashtag">#CarbonNeutral</span>
+        <span class="hashtag">#เที่ยวยั่งยืน</span>
+        <span class="hashtag">#SustainableTourism</span>
+        <!-- Dynamic destination tag — filled by JS -->
+        <span class="hashtag" id="hashtag_dest" style="display:none"></span>
       </div>
     </div>
 
@@ -612,29 +750,46 @@ const T = {
   th: {
     lbl_lang:'ภาษา / Language',
     hero_h1:'เที่ยวไทย', hero_h1b:'ไม่ทิ้งคาร์บอน',
-    hero_sub:'คำนวณรอยเท้าคาร์บอนจากทริปท่องเที่ยวของคุณ',
-    chip1:'ศรีราชา → จันทบุรี', chip2:'เขาชะเมา · น้ำตกพริ้ว', chip3:'ครอบครัว 4 คน',
+    hero_sub:'กรอกข้อมูลทริปด้านล่าง แล้วกดคำนวณเพื่อดูผลลัพธ์',
+    chip1:'', chip2:'', chip3:'',
     t_travel:'การเดินทาง', t_travel_sub:'รถยนต์ดีเซล + น้ำมัน B20',
     lbl_dist:'ระยะทางรวม (กม.)', lbl_fuel:'ประเภทน้ำมัน',
     lbl_cons:'อัตราสิ้นเปลือง (ลิตร/100กม.)', lbl_pax:'จำนวนผู้โดยสาร',
     fo_B7:'ดีเซล B7 (มาตรฐาน)', fo_B20:'ดีเซล B20 (ชีวภาพ)',
     fo_premier:'ดีเซล Premier (พรีเมียม)', fo_gasoline:'เบนซิน',
-    fo_gasohol95:'แก๊สโซฮอล์ E10 (95)', fo_EV:'รถไฟฟ้า EV',
+    fo_gasohol95:'แก๊สโซฮอล์ (95)', fo_EV:'รถไฟฟ้า EV',
     fo_motorcycle:'มอเตอร์ไซค์', fo_bus:'รถโดยสาร VIP Bus',
-    fo_train:'รถไฟ (ถึงระยอง) + บขส./รถตู้',
+    fo_train:'🚂 รถไฟ',
+    fo_airplane:'✈️ เครื่องบิน Low-Cost', fo_taxi:'🚕 Taxi / Grab Car', fo_bts:'🚈 BTS / MRT / รถไฟฟ้าในเมือง', fo_lpg:'LPG (ก๊าซธรรมชาติ)',
+    fo_gasohol95:'แก๊สโซฮอล์ (95)',
     t_food:'อาหาร & เครื่องดื่ม', t_food_sub:'ตลอดทริป (ต่อคน)',
     lbl_local:'มื้ออาหารท้องถิ่น / Local', lbl_regular:'มื้ออาหารทั่วไป', meal_unit:'มื้อ',
-    t_stay:'ที่พัก', t_stay_sub:'จองผ่าน Agoda · จันทบุรี',
+    t_stay:'ที่พัก', t_stay_sub:'ที่พักระหว่างทริป',
     lbl_nights:'จำนวนคืน', lbl_hotel:'ประเภทที่พัก',
     ho_budget:'โรงแรมทั่วไป (3 ดาว)', ho_eco:'Eco Lodge / Green Hotel',
     ho_luxury:'โรงแรมหรู (4-5 ดาว)', ho_homestay:'Homestay / ชุมชน',
     t_act:'กิจกรรมในทริป', t_act_sub:'เลือกกิจกรรมที่ทำในทริปนี้',
-    act_hiking_lbl:'🥾 เดินป่า / ขึ้นน้ำตก (Zero emission)',
-    act_temple_lbl:'🙏 ไหว้วัด / สักการะ (Zero emission)',
-    act_souvenir_lbl:'🛍️ ซื้อของฝาก / ของที่ระลึก (~0.5 kg/ครั้ง)',
-    act_ac_lbl:'❄️ ใช้แอร์ที่พัก (คิดรวมในที่พักแล้ว)',
+    actg_nature:'🌿 ธรรมชาติ & กีฬา (Zero emission)',
+    actg_culture:'🏛️ วัฒนธรรม & ท้องถิ่น (Zero emission)',
+    actg_water:'⚓ ทางน้ำ & ผจญภัย',
+    actg_leisure:'🏌️ กีฬา & สันทนาการ',
+    act_hiking_lbl:'🥾 เดินป่า / ขึ้นน้ำตก',
+    act_cycling_lbl:'🚴 ปั่นจักรยาน / จักรยานเสือภูเขา',
+    act_trail_lbl:'🏃 เดินเทรล / วิ่งเทรล',
+    act_swim_lbl:'🏊 ว่ายน้ำ / ดำน้ำตื้น (Snorkel)',
+    act_temple_lbl:'🙏 ไหว้วัด / สักการะ / ชมวิว',
+    act_market_lbl:'🎪 เดินตลาด / ถนนคนเดิน',
+    act_souvenir_lbl:'🛍️ ซื้อของฝาก / ของที่ระลึก',
+    act_dive_lbl:'🤿 ดำน้ำลึก / ดูปะการัง (Shore dive)',
+    act_boat_lbl:'⛵ นั่งเรือข้ามเกาะ / ชมวิว',
+    act_speedboat_lbl:'🚤 เรือสปีดโบ๊ท / เรือหางยาว',
+    act_kayak_lbl:'🛶 พายเรือคายัค / แคนู',
+    act_golf_lbl:'⛳ ออกรอบตีกอล์ฟ (18 หลุม)',
+    act_atv_lbl:'🏍️ ขี่ ATV / รถออฟโรด',
+    act_zipline_lbl:'🪂 ซิปไลน์ / กิจกรรม Outdoor Park',
+    act_ac_lbl:'❄️ ใช้แอร์ที่พัก',
     calc_btn:'🌿 คำนวณ Carbon Footprint ของทริปนี้',
-    res_label:'ผลลัพธ์', res_title:'Carbon Footprint ทริป ศรีราชา → จันทบุรี',
+    res_label:'ผลลัพธ์', res_title:'Carbon Footprint ทริปของคุณ',
     res_unit:'kgCO₂e (ทั้งทริป)', trees_unit:'ต้น', pp_unit:'ต่อคน',
     bk_header:'สัดส่วนแหล่งที่มา',
     bk_transport_name:'การเดินทาง', bk_food_name:'อาหาร', bk_stay_name:'ที่พัก',
@@ -670,33 +825,55 @@ const T = {
     rec_hotel:'ควรพิจารณาเลือกที่พักประเภท Green Hotel หรือ Homestay เพื่อลดการใช้พลังงานต่อคืนพัก และเพิ่มผลกระทบเชิงบวกต่อชุมชนท้องถิ่น',
     rec_food:'ควรเพิ่มสัดส่วนอาหารท้องถิ่นและอาหารตามฤดูกาล เพื่อลดผลกระทบจากการขนส่งวัตถุดิบ และสนับสนุนห่วงโซ่อุปทานระดับชุมชน',
     fuel_hint:'B20 ลดการปล่อย CO₂ ได้ประมาณ <strong>~13%</strong> เทียบกับ B7 มาตรฐาน (ตามหลักเกณฑ์ชีวมวล)',
+    setup_title:'ข้อมูลทริปของคุณ', setup_sub:'ปรับให้ตรงกับการเดินทางจริง',
+    lbl_origin:'จุดออกเดินทาง', lbl_dest:'ปลายทาง / จังหวัด', lbl_attraction:'สถานที่ท่องเที่ยว',
+    lbl_traveler_type:'ประเภทผู้เดินทาง',
+    ttype_family:'ครอบครัว', ttype_friends:'กลุ่มเพื่อน', ttype_couple:'คู่รัก',
+    ttype_solo:'เดี่ยว', ttype_team:'ทีมงาน',
   },
   en: {
     lbl_lang:'Language / ภาษา',
     hero_h1:'Travel Thailand', hero_h1b:'Leave No Carbon',
-    hero_sub:'Calculate your carbon footprint from your trip',
-    chip1:'Si Racha → Chanthaburi', chip2:'Khao Chamao · Phrio Falls', chip3:'Family of 4',
+    hero_sub:'Fill in your trip details below and calculate your carbon footprint',
+    chip1:'', chip2:'', chip3:'',
     t_travel:'Transport', t_travel_sub:'Diesel car + B20 biodiesel',
     lbl_dist:'Total Distance (km)', lbl_fuel:'Fuel Type',
     lbl_cons:'Fuel Consumption (L/100km)', lbl_pax:'Passengers',
     fo_B7:'Diesel B7 (Standard)', fo_B20:'Diesel B20 (Biodiesel)',
     fo_premier:'Diesel Premier (Premium)', fo_gasoline:'Gasoline',
-    fo_gasohol95:'Gasohol E10 (95)', fo_EV:'Electric Vehicle (EV)',
+    fo_gasohol95:'Gasohol (95)', fo_EV:'Electric Vehicle (EV)',
     fo_motorcycle:'Motorcycle', fo_bus:'VIP Bus / Coach',
-    fo_train:'Train (to Rayong) + Bus/Van',
+    fo_train:'🚂 Train',
+    fo_airplane:'✈️ Low-Cost Flight', fo_taxi:'🚕 Taxi / Grab Car', fo_bts:'🚈 BTS / MRT / Skytrain', fo_lpg:'LPG (Natural Gas)',
+    fo_gasohol95:'Gasohol (95)',
     t_food:'Food & Drinks', t_food_sub:'Whole trip (per person)',
     lbl_local:'Local / Seasonal Meals', lbl_regular:'Regular Meals', meal_unit:'meal',
-    t_stay:'Accommodation', t_stay_sub:'Booked via Agoda · Chanthaburi',
+    t_stay:'Accommodation', t_stay_sub:'Accommodation during trip',
     lbl_nights:'Nights', lbl_hotel:'Accommodation Type',
     ho_budget:'Standard Hotel (3-star)', ho_eco:'Eco Lodge / Green Hotel',
     ho_luxury:'Luxury Hotel (4-5 star)', ho_homestay:'Homestay / Community',
     t_act:'Activities', t_act_sub:'Select activities on this trip',
-    act_hiking_lbl:'🥾 Hiking / Waterfall trekking (Zero emission)',
-    act_temple_lbl:'🙏 Temple / Shrine visit (Zero emission)',
-    act_souvenir_lbl:'🛍️ Souvenirs / local shopping (~0.5 kg each)',
-    act_ac_lbl:'❄️ Air conditioning at hotel (included in stay)',
+    actg_nature:'🌿 Nature & Sport (Zero emission)',
+    actg_culture:'🏛️ Culture & Local (Zero emission)',
+    actg_water:'⚓ Water & Adventure',
+    actg_leisure:'🏌️ Sport & Leisure',
+    act_hiking_lbl:'🥾 Hiking / Waterfall trekking',
+    act_cycling_lbl:'🚴 Cycling / Mountain bike',
+    act_trail_lbl:'🏃 Trail walking / Trail running',
+    act_swim_lbl:'🏊 Swimming / Snorkeling',
+    act_temple_lbl:'🙏 Temple / Shrine / Viewpoint',
+    act_market_lbl:'🎪 Night market / Walking street',
+    act_souvenir_lbl:'🛍️ Souvenirs / Local shopping',
+    act_dive_lbl:'🤿 Scuba diving / Reef dive (Shore)',
+    act_boat_lbl:'⛵ Ferry / Island sightseeing boat',
+    act_speedboat_lbl:'🚤 Speedboat / Longtail boat',
+    act_kayak_lbl:'🛶 Kayaking / Canoeing',
+    act_golf_lbl:'⛳ Golf round (18 holes)',
+    act_atv_lbl:'🏍️ ATV / Off-road vehicle',
+    act_zipline_lbl:'🪂 Zipline / Outdoor adventure park',
+    act_ac_lbl:'❄️ Air conditioning at hotel',
     calc_btn:'🌿 Calculate Trip Carbon Footprint',
-    res_label:'Results', res_title:'Carbon Footprint · Si Racha → Chanthaburi',
+    res_label:'Results', res_title:'Carbon Footprint · Your Trip',
     res_unit:'kgCO₂e (full trip)', trees_unit:'trees', pp_unit:'per person',
     bk_header:'Emission Breakdown',
     bk_transport_name:'Transport', bk_food_name:'Food', bk_stay_name:'Accommodation',
@@ -732,6 +909,11 @@ const T = {
     rec_hotel:'Selecting a Green Hotel or Homestay is recommended to reduce energy consumption per guest-night and enhance positive socio-economic benefits for the local community.',
     rec_food:'Increasing the proportion of local and seasonal meals is recommended to reduce ingredient transport impacts and support community-level supply chains.',
     fuel_hint:'B20 reduces CO₂ emissions by approximately <strong>~13%</strong> compared with standard B7, based on the biogenic carbon methodology.',
+    setup_title:'Your Trip Details', setup_sub:'Customize to match your actual journey',
+    lbl_origin:'Departure Point', lbl_dest:'Destination / Province', lbl_attraction:'Attractions',
+    lbl_traveler_type:'Traveler Type',
+    ttype_family:'Family', ttype_friends:'Friends', ttype_couple:'Couple',
+    ttype_solo:'Solo', ttype_team:'Work Team',
   }
 };
 
@@ -748,13 +930,13 @@ function applyUnitButtonLanguage() {
 
 const FUEL_LABELS = {
   B7:'Diesel B7', B20:'Diesel B20', premier:'Diesel Premier',
-  gasoline:'Gasoline', gasohol95:'Gasohol E10',
+  gasoline:'Gasoline', gasohol95:'Gasohol',
   EV:'EV', motorcycle:'Motorcycle', bus:'VIP Bus', train:'Train+Bus'
 };
 
 const FUEL_LABELS_I18N = {
-  th:{B7:'ดีเซล B7', B20:'ดีเซล B20', premier:'ดีเซลพรีเมียม', gasoline:'เบนซิน', gasohol95:'แก๊สโซฮอล์ E10', EV:'รถไฟฟ้า EV', motorcycle:'มอเตอร์ไซค์', bus:'VIP Bus', train:'รถไฟ+บขส./รถตู้'},
-  en:{B7:'Diesel B7', B20:'Diesel B20', premier:'Diesel Premier', gasoline:'Gasoline', gasohol95:'Gasohol E10', EV:'Electric Vehicle', motorcycle:'Motorcycle', bus:'VIP Bus / Coach', train:'Train + Bus/Van'}
+  th:{B7:'ดีเซล B7', B20:'ดีเซล B20', premier:'ดีเซลพรีเมียม', gasoline:'เบนซิน', gasohol95:'แก๊สโซฮอล์', EV:'รถไฟฟ้า EV', motorcycle:'มอเตอร์ไซค์', bus:'VIP Bus', train:'รถไฟ', airplane:'เครื่องบิน Low-Cost', taxi:'Taxi/Grab Car', bts:'BTS/MRT/รถไฟฟ้า', lpg:'LPG'},
+  en:{B7:'Diesel B7', B20:'Diesel B20', premier:'Diesel Premier', gasoline:'Gasoline', gasohol95:'Gasohol (95)', EV:'Electric Vehicle', motorcycle:'Motorcycle', bus:'VIP Bus / Coach', train:'Train', airplane:'Low-Cost Flight', taxi:'Taxi/Grab Car', bts:'BTS/MRT/Skytrain', lpg:'LPG'}
 };
 function fuelLabel(fuel){ return (FUEL_LABELS_I18N[LANG] && FUEL_LABELS_I18N[LANG][fuel]) || FUEL_LABELS[fuel] || fuel; }
 
@@ -785,7 +967,7 @@ function setLang(lang) {
   syncConsUnit();
   // Update unit toggle button labels
   applyUnitButtonLanguage();
-  // Refresh any static labels not covered by T[] loop
+  // Refresh static labels + traveler buttons + chip3 (all in one call)
   refreshStaticLanguage();
   // Re-render results if already calculated (reliable cross-browser)
   if (_hasCalculated) calculate();
@@ -799,7 +981,9 @@ const EF = {
     B7:2.68, B20:2.33, premier:2.68,
     gasoline:2.31, gasohol95:2.14,
     EV:0.50, motorcycle:2.31,
-    bus:0.028, train:0.045
+    bus:0.028, train:0.045,
+    airplane:0.255, taxi:0.21, bts:0.035,
+    lpg:1.63
   },
   food:{ local:0.5, regular:1.2 },
   hotel:{ budget:8.0, eco:4.0, luxury:20.0, homestay:3.0 }
@@ -807,7 +991,8 @@ const EF = {
 
 const DEFAULT_CONS = {
   B7:9.5, B20:9.5, premier:9.2, gasoline:9.0, gasohol95:9.0,
-  EV:18, motorcycle:3.0, bus:null, train:null
+  EV:18, motorcycle:3.0, bus:null, train:null,
+  airplane:null, taxi:null, bts:null, lpg:10.0
 };
 const CONS_UNITS_TH = { EV:'kWh/100กม.' };
 const CONS_UNITS_EN = { EV:'kWh/100km' };
@@ -826,11 +1011,15 @@ const CMP_TH = {
   B20: ['B20 ชีวภาพ','B20 Biodiesel'],
   premier: ['Diesel Premier','Diesel Premier'],
   gasoline:['เบนซิน','Gasoline'],
-  gasohol95:['Gasohol E10','Gasohol E10'],
+  gasohol95:['แก๊สโซฮอล์ (95)','Gasohol (95)'],
   EV:  ['รถไฟฟ้า EV','Electric Vehicle'],
   motorcycle:['มอเตอร์ไซค์','Motorcycle'],
   bus: ['VIP Bus','VIP Bus'],
-  train:['รถไฟ+บขส.','Train+Bus']
+  train:['รถไฟ','Train'],
+  airplane:['เครื่องบิน Low-Cost','Low-Cost Flight'],
+  taxi:['Taxi/Grab','Taxi/Grab'],
+  bts:['BTS/MRT','BTS/MRT'],
+  lpg:['LPG','LPG']
 };
 
 function v(id){ return parseFloat(document.getElementById(id).value)||0 }
@@ -840,12 +1029,14 @@ function fmt(n){ return n.toFixed(1) }
 // DEFAULT_CONS stored in kml (กม./ลิตร) for human-friendly display
 const DEFAULT_CONS_KML = {
   B7:10.5, B20:10.5, premier:10.9, gasoline:11.1, gasohol95:11.1,
-  EV:null, motorcycle:33.3, bus:null, train:null
+  EV:null, motorcycle:33.3, bus:null, train:null,
+  airplane:null, taxi:null, bts:null, lpg:10.0
 };
 // L/100km equivalents (for EV: kWh/100km)
 const DEFAULT_CONS_L100 = {
   B7:9.5, B20:9.5, premier:9.2, gasoline:9.0, gasohol95:9.0,
-  EV:18, motorcycle:3.0, bus:null, train:null
+  EV:18, motorcycle:3.0, bus:null, train:null,
+  airplane:null, taxi:null, bts:null, lpg:10.0
 };
 
 function updateConsLabel() {
@@ -868,7 +1059,7 @@ function updateConsLabel() {
     applyUnitButtonLanguage();
     return;
   }
-  if (fuel === 'bus' || fuel === 'train') {
+  if (fuel === 'bus' || fuel === 'train' || fuel === 'airplane' || fuel === 'taxi' || fuel === 'bts') {
     inp.disabled = true; inp.value = '—'; conv.textContent = '';
     lbl.textContent = LANG==='th' ? 'อัตราสิ้นเปลือง (คิดต่อผู้โดยสาร/กม.)' : 'Consumption (per passenger-km)';
     btnKml.style.display = 'none'; btnL100.style.display = 'none';
@@ -949,27 +1140,43 @@ function updateFuelHint() {
       B20:       'B20 ลดการปล่อย CO₂ ได้ประมาณ <strong>~13%</strong> เทียบกับ B7 เพราะมีส่วนผสมชีวมวล (biogenic carbon)',
       premier:   'Diesel Premier มี EF <strong>เท่ากับ B7 (2.68 kgCO₂/L)</strong> — ลด CO₂ ได้ <strong>0%</strong> แต่ลด PM/SOx/NOx ได้ดีกว่า',
       gasoline:  'เบนซิน EF ~2.31 kgCO₂/L — ต่ำกว่า B7 เล็กน้อยเพราะ carbon chain สั้นกว่า',
-      gasohol95: 'Gasohol E10 ลด CO₂ ได้ <strong>~7.5%</strong> จากส่วนผสม ethanol 10% (biogenic carbon)',
+      gasohol95: 'แก๊สโซฮอล์ (95) ลด CO₂ ได้ <strong>~7.5%</strong> จากส่วนผสม ethanol 10% (biogenic carbon)',
       EV:        'รถ EV ปล่อย CO₂ <strong>0 ที่ท่อไอเสีย</strong> แต่คิด upstream จากกริดไฟฟ้าไทย EF = 0.50 kgCO₂/kWh (EGAT 2024)',
       motorcycle:'มอเตอร์ไซค์ใช้เบนซิน EF ~2.31 kgCO₂/L แต่สิ้นเปลืองน้อยกว่ารถยนต์มาก',
       bus:       'VIP Bus แชร์การปล่อยกับผู้โดยสารหลายคน EF เฉลี่ย <strong>0.028 kgCO₂/คน-กม.</strong> ต่ำมากเมื่อเทียบรถยนต์ส่วนตัว',
-      train:     'รถไฟ EF <strong>0.045 kgCO₂/คน-กม.</strong> — ต่ำที่สุดในทุกตัวเลือก แต่สายตะวันออกไปได้แค่ระยอง'
+      train:     'รถไฟ EF <strong>0.045 kgCO₂/คน-กม.</strong> — ต่ำที่สุดในทุกตัวเลือก ให้ครอบคลุมระยะทางเดินทาง',
+      airplane:  'เครื่องบิน Low-Cost EF <strong>~0.255 kgCO₂/คน-กม.</strong> (IATA domestic ไทย) — สูงกว่ารถยนต์ต่อคนแต่ประหยัดเวลา ควรชดเชยด้วย carbon offset',
+      taxi:      'Taxi/Grab EF <strong>~0.21 kgCO₂/คน-กม.</strong> — ใกล้เคียงรถยนต์ส่วนตัว แต่หากเป็น EV Taxi ลดลงได้ ~60%',
+      bts:       'BTS/MRT EF <strong>~0.035 kgCO₂/คน-กม.</strong> — ต่ำมาก เพราะแชร์พลังงานกับผู้โดยสารหลายร้อยคน เป็นทางเลือกที่ดีที่สุดในเมือง',
+      lpg:       'LPG EF <strong>~1.63 kgCO₂/L</strong> — ต่ำกว่าน้ำมันเบนซินและดีเซล ~30% เป็นเชื้อเพลิงที่เป็นมิตรกับสิ่งแวดล้อมกว่า แต่สถานีบริการมีน้อยกว่า'
     },
     en: {
       B7:        'B7 is the <strong>baseline</strong> standard for comparison',
       B20:       'B20 reduces CO₂ emissions by approximately <strong>~13%</strong> compared with standard B7, based on the biogenic carbon methodology.',
       premier:   'Diesel Premier has <strong>the same EF as B7 (2.68 kgCO₂/L)</strong> — CO₂ savings = <strong>0%</strong>. Benefits are lower PM/SOx/NOx only',
       gasoline:  'Gasoline EF ~2.31 kgCO₂/L — slightly lower than diesel due to shorter carbon chain',
-      gasohol95: 'Gasohol E10 reduces CO₂ by <strong>~7.5%</strong> from the 10% ethanol biogenic component',
+      gasohol95: 'Gasohol (95) reduces CO₂ by <strong>~7.5%</strong> from the 10% ethanol biogenic component',
       EV:        'EV emits <strong>zero at the tailpipe</strong> but upstream grid emissions apply: 0.50 kgCO₂/kWh (Thai grid EGAT 2024)',
       motorcycle:'Motorcycle uses gasoline EF ~2.31 kgCO₂/L but much lower fuel consumption per trip',
       bus:       'VIP Bus emissions are shared across passengers: avg <strong>0.028 kgCO₂/pkm</strong> — very low vs private car',
-      train:     'Train EF <strong>0.045 kgCO₂/pkm</strong> — lowest of all options. Eastern line ends at Rayong'
+      train:     'Train EF <strong>0.045 kgCO₂/pkm</strong> — lowest of all options. suitable for trips along available rail routes',
+      airplane:  'Low-cost flight EF <strong>~0.255 kgCO₂/pkm</strong> (IATA Thailand domestic) — higher than car per person but saves time. Offset is recommended.',
+      taxi:      'Taxi/Grab EF <strong>~0.21 kgCO₂/pkm</strong> — similar to private gasoline car. EV Taxi reduces this by ~60%.',
+      bts:       'BTS/MRT EF <strong>~0.035 kgCO₂/pkm</strong> — very low as energy is shared across hundreds of passengers. Best urban option.',
+      lpg:       'LPG EF <strong>~1.63 kgCO₂/L</strong> — ~30% lower than petrol/diesel. A cleaner fuel alternative, though refueling stations are less common.'
     }
   };
   const h = hints[LANG]?.[fuel] || hints['th']['B20'];
   el.innerHTML = h;
 }
+
+// Null-safe DOM setter — prevents TypeError when element missing
+function safeSet(id, prop, val) {
+  const el = document.getElementById(id);
+  if (el && val !== undefined && val !== null) el[prop] = val;
+}
+function safeText(id, val) { safeSet(id, 'textContent', val); }
+function safeHTML(id, val) { safeSet(id, 'innerHTML',   val); }
 
 function calculate() {
   const t = T[LANG];
@@ -982,7 +1189,7 @@ function calculate() {
   const hotelType  = s('hotel_type');
 
   let transportTotal=0, transportDetail='';
-  if (fuel==='bus'||fuel==='train') {
+  if (fuel==='bus'||fuel==='train'||fuel==='airplane'||fuel==='taxi'||fuel==='bts') {
     transportTotal = dist * EF.fuel[fuel] * pax;
     transportDetail = `${dist}km × ${EF.fuel[fuel]} kgCO₂/pkm × ${pax}`;
   } else {
@@ -995,19 +1202,33 @@ function calculate() {
   }
 
   // Baseline vs B7 private car
-  const consBase   = (fuel==='bus'||fuel==='train') ? 9.5 : getConsL100();
+  const consBase   = (fuel==='bus'||fuel==='train'||fuel==='airplane'||fuel==='taxi'||fuel==='bts') ? 9.5 : getConsL100();
   const baselineTotal = (dist/100)*consBase * EF.fuel['B7'];
 
   const foodPP    = localMeals*EF.food.local + regMeals*EF.food.regular;
   const foodTotal = foodPP * pax;
   const stayTotal = nights * EF.hotel[hotelType] * (pax/2);
-  const souvenirAdd = document.getElementById('act_souvenir').checked ? 0.5*pax : 0;
+  // Activity emissions (per person × pax)
+  const ACT_EF = {
+    act_souvenir: 0.5,   // kg/pax — shopping/souvenirs (lifecycle estimate)
+    act_boat:     1.5,   // kg/pax — ferry/sightseeing boat (diesel, shared)
+    act_speedboat: 3.5,  // kg/pax — speedboat / longtail (high fuel, few passengers)
+    act_golf:     2.0,   // kg/pax — golf round: cart + course machinery + irrigation
+    act_atv:      2.5,   // kg/pax — ATV/offroad: 2-stroke/4-stroke petrol
+    act_zipline:  0.3,   // kg/pax — zipline setup energy, minimal
+    // Zero emission activities — no entry needed (default 0)
+  };
+  let activityTotal = 0;
+  Object.entries(ACT_EF).forEach(([id, ef]) => {
+    const el = document.getElementById(id);
+    if (el && el.checked) activityTotal += ef * pax;
+  });
 
-  const grand   = transportTotal + foodTotal + stayTotal + souvenirAdd;
+  const grand   = transportTotal + foodTotal + stayTotal + activityTotal;
   const grandPP = grand / pax;
   const trees   = Math.ceil(grand/16);
 
-  const nonTransportTotal = foodTotal + stayTotal + souvenirAdd;
+  const nonTransportTotal = foodTotal + stayTotal + activityTotal;
   const hotspot = transportTotal >= foodTotal && transportTotal >= stayTotal ? t.bk_transport_name : (foodTotal >= stayTotal ? t.bk_food_name : t.bk_stay_name);
   const reductionPct = baselineTotal > 0 ? Math.max(0, (baselineTotal - transportTotal) / baselineTotal) : 0;
   const score = Math.max(0, Math.min(100, Math.round(100 - (grandPP * 1.8) + (reductionPct * 20))));
@@ -1019,44 +1240,43 @@ function calculate() {
 
 
   // Main result
-  document.getElementById('total_co2').textContent = fmt(grand);
-  document.getElementById('res_unit').textContent  = t.res_unit;
-  document.getElementById('per_person_text').textContent =
-    `${fmt(grandPP)} kgCO₂e ${t.pp_unit} · 🌳 ${trees} ${t.trees_unit}`;
+  safeText('total_co2', fmt(grand));
+  safeText('res_unit', t.res_unit);
+  safeText('per_person_text', `${fmt(grandPP)} kgCO₂e ${t.pp_unit} · 🌳 ${trees} ${t.trees_unit}`);
 
 
   // V7 Decision-support panels
-  document.getElementById('score_kicker').textContent = t.score_kicker;
-  document.getElementById('score_label').textContent = t.score_label;
-  document.getElementById('score_grade').textContent = grade;
-  document.getElementById('score_num').textContent = score;
-  document.getElementById('score_fill').style.width = score + '%';
-  document.getElementById('score_note').textContent = t.score_note_tpl;
-  document.getElementById('impact_title').textContent = t.impact_title;
-  document.getElementById('impact_note').innerHTML = t.impact_tpl.replace('{pp}', fmt(grandPP)).replace('{hotspot}', hotspot);
-  document.getElementById('rec_title').textContent = t.rec_title;
-  document.getElementById('rec_list').innerHTML = `
+  safeText('score_kicker', t.score_kicker);
+  safeText('score_label', t.score_label);
+  safeText('score_grade', grade);
+  safeText('score_num', score);
+  const _sf = document.getElementById('score_fill'); if(_sf) _sf.style.width = score + '%';
+  safeText('score_note', t.score_note_tpl);
+  safeText('impact_title', t.impact_title);
+  safeHTML('impact_note', t.impact_tpl.replace('{pp}', fmt(grandPP)).replace('{hotspot}', hotspot));
+  safeText('rec_title', t.rec_title);
+  safeHTML('rec_list', `
     <div class="rec-item"><div>🚆</div><div>${t.rec_train}</div></div>
     <div class="rec-item"><div>⚡</div><div>${t.rec_ev.replace('{ev}', fmt(evTransport))}</div></div>
     <div class="rec-item"><div>🏨</div><div>${t.rec_hotel}</div></div>
-    <div class="rec-item"><div>🥗</div><div>${t.rec_food}</div></div>`;
-  document.getElementById('sc_b20').textContent = fmt(b20Scenario);
-  document.getElementById('sc_ev').textContent = fmt(evScenario);
-  document.getElementById('sc_train').textContent = fmt(trainScenario);
-  document.getElementById('sc_b20_sub').textContent = t.sc_total;
-  document.getElementById('sc_ev_sub').textContent = t.sc_ev_sub;
-  document.getElementById('sc_train_sub').textContent = t.sc_train_sub;
-  document.getElementById('method_title').textContent = t.method_title;
-  document.getElementById('method_desc').textContent = t.method_desc;
-  document.getElementById('src_ipcc').textContent = t.src_ipcc;
-  document.getElementById('src_tgo').textContent = t.src_tgo;
-  document.getElementById('src_egat').textContent = t.src_egat;
-  document.getElementById('src_dede').textContent = t.src_dede;
+    <div class="rec-item"><div>🥗</div><div>${t.rec_food}</div></div>`);
+  safeText('sc_b20', fmt(b20Scenario));
+  safeText('sc_ev', fmt(evScenario));
+  safeText('sc_train', fmt(trainScenario));
+  safeText('sc_b20_sub', t.sc_total);
+  safeText('sc_ev_sub', t.sc_ev_sub);
+  safeText('sc_train_sub', t.sc_train_sub);
+  safeText('method_title', t.method_title);
+  safeText('method_desc', t.method_desc);
+  safeText('src_ipcc', t.src_ipcc);
+  safeText('src_tgo', t.src_tgo);
+  safeText('src_egat', t.src_egat);
+  safeText('src_dede', t.src_dede);
 
   // Breakdown names
-  document.getElementById('bk_transport_name').textContent = t.bk_transport_name;
-  document.getElementById('bk_food_name').textContent      = t.bk_food_name;
-  document.getElementById('bk_stay_name').textContent      = t.bk_stay_name;
+  safeText('bk_transport_name', t.bk_transport_name);
+  safeText('bk_food_name', t.bk_food_name);
+  safeText('bk_stay_name', t.bk_stay_name);
 
   setBreakdown('transport', transportTotal, grand, transportDetail);
   setBreakdown('food',      foodTotal,      grand,
@@ -1069,27 +1289,24 @@ function calculate() {
 
   // Compare section — dynamic title
   const fuelLabel = CMP_TH[fuel]?.[LANG==='th'?0:1] || fuel.toUpperCase();
-  document.getElementById('cmp_title').textContent =
-    LANG==='th' ? `${fuelLabel} vs B7 มาตรฐาน` : `${fuelLabel} vs Standard B7`;
+  safeText('cmp_title', LANG==='th' ? `${fuelLabel} vs B7 มาตรฐาน` : `${fuelLabel} vs Standard B7`);
 
-  document.getElementById('cmp_actual').textContent   = fmt(transportTotal);
-  document.getElementById('cmp_baseline').textContent = fmt(baselineTotal);
+  safeText('cmp_actual', fmt(transportTotal));
+  safeText('cmp_baseline', fmt(baselineTotal));
 
-  document.getElementById('cmp_actual_desc').innerHTML =
-    `${t.cmp_actual_sub}<br><strong style="color:var(--mint)">${fuelLabel} ${t.cmp_actual_good}</strong>`;
-  document.getElementById('cmp_baseline_desc').innerHTML =
-    `${t.cmp_baseline_sub}<br><strong style="color:var(--warn)">${t.cmp_baseline_bad}</strong>`;
+  safeHTML('cmp_actual_desc', `${t.cmp_actual_sub}<br><strong style="color:var(--mint)">${fuelLabel} ${t.cmp_actual_good}</strong>`);
+  safeHTML('cmp_baseline_desc', `${t.cmp_baseline_sub}<br><strong style="color:var(--warn)">${t.cmp_baseline_bad}</strong>`);
 
   const saving = baselineTotal - transportTotal;
-  document.getElementById('saving_label').textContent = t.saving_label;
-  document.getElementById('saving_val').textContent   = saving > 0
+  safeText('saving_label', t.saving_label);
+  safeText('saving_val', saving > 0
     ? `${fmt(saving)} kgCO₂e`
-    : `+${fmt(Math.abs(saving))} kgCO₂e (${t.saving_more})`;
+    : `+${fmt(Math.abs(saving))} kgCO₂e (${t.saving_more})`);
 
   // Offset
-  document.getElementById('off_title').textContent = t.off_title;
-  document.getElementById('off_sub').textContent   = t.off_sub;
-  document.getElementById('offset_options').innerHTML = `
+  safeText('off_title', t.off_title);
+  safeText('off_sub', t.off_sub);
+  safeHTML('offset_options', `
     <div class="offset-option">
       <div class="oo-icon">🌳</div>
       <div class="oo-info">
@@ -1121,11 +1338,11 @@ function calculate() {
         <div class="oo-desc">${t.oo_tver_d}</div>
       </div>
       <div class="oo-val">~${Math.max(1, Math.ceil(grand/1000*75))} ${t.oo_baht}</div>
-    </div>`;
+    </div>`);
 
-  document.getElementById('share_title').textContent = t.share_title;
-  document.getElementById('share_sub').textContent   = t.share_sub;
-  document.getElementById('save_btn_lbl').textContent = t.save_btn_lbl;
+  safeText('share_title', t.share_title);
+  safeText('share_sub', t.share_sub);
+  safeText('save_btn_lbl', t.save_btn_lbl);
 
   // Show
   document.getElementById('results').style.display = 'block';
@@ -1166,7 +1383,10 @@ async function saveImage() {
     });
     const link = document.createElement('a');
     const ts   = new Date().toISOString().slice(0,10);
-    link.download = `CarbonFreeJourney-ศรีราชา-จันทบุรี-${ts}.png`;
+    const origin = (document.getElementById('trip_origin')?.value || 'trip').trim().replace(/\s+/g,'-');
+    const dest   = (document.getElementById('trip_dest')?.value || '').trim().replace(/\s+/g,'-');
+    const fname  = dest ? `CarbonFreeJourney-${origin}-${dest}-${ts}.png` : `CarbonFreeJourney-${origin}-${ts}.png`;
+    link.download = fname;
     link.href = canvas.toDataURL('image/png');
     link.click();
   } catch(e) {
@@ -1177,20 +1397,150 @@ async function saveImage() {
   btn.querySelector('span:last-child').textContent = t.save_btn_lbl;
 }
 
-window.addEventListener('load', ()=>{ updateConsLabel(); updateFuelHint(); syncConsUnit(); setTimeout(calculate, 300); });
+
+// ══════════════════════════════════════════
+// TRIP META — dynamic hero chips & titles
+// ══════════════════════════════════════════
+let _travelerType = 'family'; // default
+
+const TRAVELER_ICONS = {
+  family:'👨‍👩‍👦', friends:'👫', couple:'💑', solo:'🧍', team:'👔'
+};
+
+function getTravelerLabel() {
+  const btn = document.querySelector('.ttype-btn.active');
+  if (!btn) return LANG==='th' ? 'ครอบครัว' : 'Family';
+  return btn.getAttribute('data-' + LANG) || btn.getAttribute('data-th');
+}
+
+function getChip3Icon() {
+  return TRAVELER_ICONS[_travelerType] || '👨‍👩‍👦';
+}
+
+function updateTripMeta() {
+  // Update input placeholders for current language
+  const ph = {
+    trip_origin:     LANG==='th' ? 'เช่น กรุงเทพฯ, เชียงใหม่'        : 'e.g. Bangkok, Chiang Mai',
+    trip_dest:       LANG==='th' ? 'เช่น เชียงราย, ภูเก็ต'            : 'e.g. Chiang Rai, Phuket',
+    trip_attraction: LANG==='th' ? 'เช่น ดอยอินทนนท์ · วัดพระธาตุ'   : 'e.g. Doi Inthanon · Wat Phrathat',
+  };
+  // Also update distance & consumption placeholder by language
+  const distEl = document.getElementById('distance');
+  if (distEl) distEl.placeholder = LANG==='th' ? 'เช่น 520 กม.' : 'e.g. 520 km';
+  const consEl = document.getElementById('consumption');
+  if (consEl && !consEl.disabled) consEl.placeholder = LANG==='th' ? 'เช่น 13' : 'e.g. 13';
+  Object.entries(ph).forEach(([id, p]) => {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = p;
+  });
+
+  const origin     = (document.getElementById('trip_origin')?.value || '').trim();
+  const dest       = (document.getElementById('trip_dest')?.value || '').trim();
+  const attraction = (document.getElementById('trip_attraction')?.value || '').trim();
+  const pax        = Math.max(1, parseInt(document.getElementById('passengers')?.value) || 1);
+  const typeLabel  = getTravelerLabel();
+  const icon       = getChip3Icon();
+  const paxLabel   = LANG==='th' ? `${pax} คน` : `${pax} ${pax===1?'person':'people'}`;
+
+  // Update hero chips
+  const c1 = document.getElementById('chip1');
+  const c2 = document.getElementById('chip2');
+  const c3 = document.getElementById('chip3');
+
+  if (c1) c1.textContent = origin || dest
+    ? `${origin||'?'} → ${dest||'?'}`
+    : (LANG==='th' ? '📍 ระบุต้นทาง-ปลายทาง' : '📍 Origin → Destination');
+  if (c2) c2.textContent = attraction || (LANG==='th' ? '🌿 ระบุสถานที่ท่องเที่ยว' : '🌿 Add attractions');
+  if (c3) c3.textContent = `${typeLabel} ${paxLabel}`;
+  // Update chip3 icon element (new separate span)
+  const c3icon = document.getElementById('chip3_icon');
+  if (c3icon) c3icon.textContent = icon;
+  if (c3icon) c3icon.textContent = icon;
+
+  // Update result title
+  const resTitle = document.getElementById('res_title');
+  if (resTitle) {
+    const route = origin && dest ? `${origin} → ${dest}` : (LANG==='th' ? 'ทริปของคุณ' : 'Your Trip');
+    resTitle.textContent = LANG==='th'
+      ? `Carbon Footprint ทริป ${route}`
+      : `Carbon Footprint · ${route}`;
+  }
+
+  // Update dynamic destination hashtag
+  const hashDest = document.getElementById('hashtag_dest');
+  if (hashDest) {
+    if (dest) {
+      hashDest.textContent = '#' + dest.replace(/\s+/g,'');
+      hashDest.style.display = 'flex';
+    } else {
+      hashDest.style.display = 'none';
+    }
+  }
+
+  // Update stay sub (hotel booking context)
+  const staySub = document.getElementById('t_stay_sub');
+  if (staySub) {
+    staySub.textContent = LANG==='th'
+      ? (dest ? `จองผ่าน Agoda · ${dest}` : 'ที่พักระหว่างทริป')
+      : (dest ? `Booked via Agoda · ${dest}` : 'Accommodation during trip');
+  }
+}
+
+function setTravelerType(btn) {
+  document.querySelectorAll('.ttype-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _travelerType = btn.getAttribute('data-type');
+
+  // Auto-set passengers for couple/solo
+  const paxInput = document.getElementById('passengers');
+  if (_travelerType === 'couple' && paxInput) { paxInput.value = 2; }
+  if (_travelerType === 'solo'   && paxInput) { paxInput.value = 1; }
+
+  updateTripMeta();
+}
+
+// Wire passengers input → chip3 live update
+document.addEventListener('DOMContentLoaded', () => {
+  const paxInput = document.getElementById('passengers');
+  if (paxInput) {
+    paxInput.addEventListener('input', updateTripMeta);
+    paxInput.addEventListener('change', updateTripMeta);
+  }
+
+  // Wire text inputs for trip meta
+  ['trip_origin','trip_dest','trip_attraction'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateTripMeta);
+  });
+
+  // Initial render
+  updateTripMeta();
+});
+
+
+window.addEventListener('load', ()=>{ updateConsLabel(); updateFuelHint(); syncConsUnit(); updateTripMeta(); setTimeout(calculate, 300); });
 
 // Extra i18n guard: translate dynamic/static elements that may not be covered by the first pass
 function refreshStaticLanguage() {
   const t = T[LANG];
-  // Only update elements NOT handled by calculate() to avoid overwrite
-  // cmp_actual_desc / cmp_baseline_desc use innerHTML in calculate() — skip here
+  // All IDs mapped directly — most reliable approach
   const pairs = {
     lbl_lang: t.lbl_lang,
+    setup_title: t.setup_title, setup_sub: t.setup_sub,
+    lbl_origin: t.lbl_origin, lbl_dest: t.lbl_dest,
+    lbl_attraction: t.lbl_attraction, lbl_traveler_type: t.lbl_traveler_type,
+    // Traveler type button spans — direct getElementById for reliability
+    ttype_family: t.ttype_family, ttype_friends: t.ttype_friends,
+    ttype_couple: t.ttype_couple, ttype_solo: t.ttype_solo, ttype_team: t.ttype_team,
+    actg_nature: t.actg_nature, actg_culture: t.actg_culture,
+    actg_water: t.actg_water, actg_leisure: t.actg_leisure,
   };
   Object.entries(pairs).forEach(([id, text]) => {
     const el = document.getElementById(id);
-    if (el && text) el.textContent = text;
+    if (el && text !== undefined) el.textContent = text;
   });
+  // Also update chip3 after traveler labels change
+  updateTripMeta();
 }
 
 // refreshStaticLanguage is called directly inside setLang() above — no wrapper needed
@@ -1198,7 +1548,7 @@ document.addEventListener('DOMContentLoaded', refreshStaticLanguage);
 
 
 
-// V7.1 — applyAcademicDynamicLanguage removed (duplicate, now integrated into calculate())
+// applyAcademicDynamicLanguage removed (duplicate, now integrated into calculate())
 
 </script>
 </body>
