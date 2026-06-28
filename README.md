@@ -40,7 +40,7 @@ This project is suitable for:
 
 ## Demo
 
-Live Demo: https://thesor55.github.io/carbon-free-journey
+Live Demo: https://thesor55.github.io/Carbon-Free-Journey-Calculator/
 
 ## Status
 
@@ -48,9 +48,7 @@ Prototype / MVP
 
 ## Screenshots
 
-Add calculator screenshots here after UI review.
-
-Suggested path: docs/screenshots/carbon-free-journey-calculator.png
+![Carbon Free Journey Calculator](assets/screenshots/calculator.png)
 
 ## Consultant Context
 
